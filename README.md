@@ -8,14 +8,18 @@ A comprehensive, high-accuracy thermocouple calculation library for Python, impl
 
 ## Features
 
-✅ **Complete NIST Implementation**: All polynomial coefficients from NIST Monograph 175  
-✅ **All Standard Types**: B, E, J, K, N, R, S, T thermocouples  
-✅ **Modular Architecture**: Each thermocouple type in separate module for maintainability  
-✅ **Bidirectional Conversion**: Temperature ↔ Voltage  
-✅ **Seebeck Coefficients**: Calculate sensitivity (µV/K)  
-✅ **Cold Junction Compensation**: Automatic reference junction correction  
-✅ **Individual Leg Support**: Separate positive/negative leg calculations  
-✅ **High Precision**: NIST-grade accuracy for scientific applications  
+- **Temperature to Voltage Conversion**: Convert temperature (°C) to thermoelectric voltage (V)
+- **Voltage to Temperature Conversion**: Convert voltage (V) to temperature (°C)
+- **Seebeck Coefficient Calculation**: Get the Seebeck coefficient (µV/K) at any temperature
+- **Temperature Derivative of Seebeck**: Calculate dSeebeck/dT (nV/K²) for advanced analysis
+- **Cold Junction Compensation**: Built-in support for reference junction temperature compensation
+- **Individual Thermocouple Leg Calculations**: 
+  - Voltage calculations for positive and negative legs separately
+  - Seebeck coefficient calculations for positive and negative legs separately
+- **High Accuracy**: Based on NIST Monograph 175 polynomial coefficients
+- **All Standard Types**: Supports B, E, J, K, N, R, S, and T type thermocouples
+- **Pure Python**: No external dependencies required
+- **Well Tested**: Comprehensive test suite ensuring accuracy
 
 ## Supported Thermocouple Types
 
@@ -76,53 +80,36 @@ print(f"dS/dT at 100°C: {dsdt:.2f} nV/K²")
 
 ### Individual Thermocouple Legs
 
+For advanced applications, you can calculate voltages for individual thermocouple legs:
+
 ```python
-# For thermocouples with individual leg data (Types E, J, K, N, T)
-tc_k = get_thermocouple("K")
+# Get voltage for positive leg only (Ni-Cr for Type K)
+v_pos = tc_k.temperature_to_volt_pos_leg(100.0)  # Returns voltage in V
 
-# Positive leg (Ni-Cr)
-v_pos = tc_k.temperature_to_voltage_positive_leg(100.0)
+# Get voltage for negative leg only (Ni-Al for Type K)
+v_neg = tc_k.temperature_to_volt_neg_leg(100.0)  # Returns voltage in V
 
-# Negative leg (Ni-Al) 
-v_neg = tc_k.temperature_to_voltage_negative_leg(100.0)
-
-# The thermocouple voltage is the difference
+# The total thermocouple voltage is the difference
 v_total = v_pos - v_neg  # Should equal tc_k.temperature_to_voltage(100.0)
 ```
 
-### Available Functions
+### Individual Leg Seebeck Coefficients
+
+You can also calculate Seebeck coefficients for individual thermocouple legs:
 
 ```python
-from thermocouples import (
-    get_thermocouple,           # Get thermocouple instance
-    temperature_to_voltage,     # Direct T→V conversion
-    voltage_to_temperature,     # Direct V→T conversion
-    voltage_to_temperature_with_reference,  # With cold junction compensation
-    temp_to_seebeck,           # Temperature to Seebeck coefficient
-    temp_to_dsdt,              # Temperature to dSeebeck/dT
-    THERMOCOUPLE_TYPES,        # Dictionary of all available types
-)
+# Get Seebeck coefficient for positive leg (Ni-Cr for Type K)
+seebeck_pos = tc_k.temperature_to_seebeck_pos_leg(100.0)  # Returns µV/K
+print(f"Positive leg Seebeck at 100°C: {seebeck_pos:.3f} µV/K")
+
+# Get Seebeck coefficient for negative leg (Ni-Al for Type K)
+seebeck_neg = tc_k.temperature_to_seebeck_neg_leg(100.0)  # Returns µV/K
+print(f"Negative leg Seebeck at 100°C: {seebeck_neg:.3f} µV/K")
+
+# The total Seebeck coefficient is the difference
+seebeck_total = seebeck_pos - seebeck_neg  # Should equal tc_k.temperature_to_seebeck(100.0)
+print(f"Total Seebeck coefficient: {seebeck_total:.3f} µV/K")
 ```
-
-## Data Source & Accuracy
-
-All polynomial coefficients and equations are based on:
-
-**NIST Monograph 175**: *"Temperature-Electromotive Force Reference Functions and Tables for the Letter-Designated Thermocouple Types Based on the ITS-90"*
-
-- 📖 [Official NIST Publication](https://nvlpubs.nist.gov/nistpubs/Legacy/MONO/nistmonograph175.pdf)
-- 🎯 **Accuracy**: Matches NIST reference tables to measurement precision
-- ✅ **Validation**: Coefficients verified using AI-assisted validation
-- 📐 **Standards**: ITS-90 temperature scale compliant
-
-## Use Cases
-
-- **Laboratory Instrumentation**: High-precision temperature measurements
-- **Industrial Process Control**: Temperature monitoring and control systems
-- **Research & Development**: Thermal analysis and calibration
-- **Data Acquisition**: Convert raw thermocouple voltages to temperatures
-- **Sensor Calibration**: Validate thermocouple measurement systems
-- **Educational**: Learn thermocouple physics and calculations
 
 ## API Reference
 
@@ -144,6 +131,18 @@ class ThermocoupleType:
         
     def temperature_to_dsdt(self, temp_c: float) -> float:
         """Calculate dSeebeck/dT (nV/K²) at temperature"""
+        
+    def temperature_to_volt_pos_leg(self, temp_c: float) -> float:
+        """Calculate the thermoelectric voltage of the positive leg at a given temperature."""
+        
+    def temperature_to_volt_neg_leg(self, temp_c: float) -> float:
+        """Calculate the thermoelectric voltage of the negative leg at a given temperature."""
+        
+    def temperature_to_seebeck_pos_leg(self, temp_c: float) -> float:
+        """Calculate the Seebeck coefficient of the positive leg at a given temperature."""
+        
+    def temperature_to_seebeck_neg_leg(self, temp_c: float) -> float:
+        """Calculate the Seebeck coefficient of the negative leg at a given temperature."""
 ```
 
 ## Requirements
@@ -184,4 +183,5 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ---
 
+*If this library helped your project, please consider giving it a ⭐ on GitHub!*
 *If this library helped your project, please consider giving it a ⭐ on GitHub!*

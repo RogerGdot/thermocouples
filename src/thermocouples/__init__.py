@@ -12,7 +12,9 @@ Features:
 - dSeebeck/dT calculation (nV/K²)
 - Cold junction compensation
 - High-accuracy NIST polynomial calculations
-- Support for individual thermocouple legs
+- Support for individual thermocouple legs:
+  - Voltage calculations for positive and negative legs
+  - Seebeck coefficient calculations for positive and negative legs
 
 Example:
 --------

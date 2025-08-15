@@ -14,6 +14,8 @@ class ThermocoupleType:
     - Temperature to Seebeck coefficient (µV/K)
     - Temperature to dSeebeck/dT (nV/°C²)
     - Direct calculation of temperature from measured voltage and reference temperature
+    - Individual leg voltage calculations (positive and negative)
+    - Individual leg Seebeck coefficient calculations (positive and negative)
     """
 
     def __init__(
