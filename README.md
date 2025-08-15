@@ -1,8 +1,9 @@
-# Python Thermocouples
+# Python Thermocouples v2.0
 
-[![PyPI version](https://badge.fury.io/py/thermocouples.svg)](https://badge.fury.io/py/thermocouples)
-[![Python](https://img.shields.io/pypi/pyversions/thermocouples.svg)](https://pypi.org/project/thermocouples/)
+[![PyPI version](https://badge.fury.io/py/python-thermocouples.svg)](https://badge.fury.io/py/python-thermocouples)
+[![Python](https://img.shields.io/pypi/pyversions/python-thermocouples.svg)](https://pypi.org/project/python-thermocouples/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Tests](https://github.com/RogerGdot/thermocouples/actions/workflows/tests.yml/badge.svg)](https://github.com/RogerGdot/thermocouples/actions/workflows/tests.yml)
 
 A comprehensive, high-accuracy thermocouple calculation library for Python, implementing all standard thermocouple types with NIST-compliant polynomial calculations using modern object-oriented architecture.
 
@@ -49,26 +50,39 @@ A comprehensive, high-accuracy thermocouple calculation library for Python, impl
 ### Installation
 
 ```bash
-pip install thermocouples
+pip install python-thermocouples
 ```
 
-### Basic Usage
+### Basic Usage (New OOP API - Recommended)
 
 ```python
 import thermocouples as tc
 
+# Create thermocouple instance
+tc_k = tc.get_thermocouple("K")
+
 # Temperature to voltage conversion
-tc_type_k = tc.get_thermocouple("K")
-voltage = tc_type_k.temperature_to_voltage(100.0)  # 4.096 mV at 100°C
+voltage = tc_k.temperature_to_voltage(100.0)  # 4.096 mV at 100°C
 print(f"K-type at 100°C: {voltage:.3f} mV")
 
 # Voltage to temperature conversion  
-temperature = tc_type_k.voltage_to_temperature(0.004096)  # Back to ~100°C
+temperature = tc_k.voltage_to_temperature(0.004096)  # Back to ~100°C
 print(f"K-type at 4.096 mV: {temperature:.1f}°C")
 
-# Legacy API (still supported)
+# Seebeck coefficient calculation
+seebeck = tc_k.temp_to_seebeck(100.0)  # µV/K
+print(f"Seebeck coefficient at 100°C: {seebeck:.1f} µV/K")
+```
+
+### Legacy API (Backward Compatible)
+
+```python
+import thermocouples as tc
+
+# All original functions still work exactly the same
 voltage = tc.temp_to_voltage(100.0, "K")
 temperature = tc.voltage_to_temp(0.004096, "K")
+seebeck = tc.temp_to_seebeck(100.0, "K")
 ```
 
 ### Advanced Usage

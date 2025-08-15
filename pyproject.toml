@@ -3,12 +3,12 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "thermocouples"
-version = "1.1.0"
+name = "python-thermocouples"
+version = "2.0.0"
 authors = [
-    {name = "Dipl.-Ing. Gregor Oppitz", email = "gregor.oppitz@dlr.de"},
+    {name = "RogerGdot", email = "roger@example.com"},
 ]
-description = "High-accuracy NIST-compliant thermocouple calculations for all standard types"
+description = "Modern object-oriented thermocouple library with NIST-compliant calculations for all standard types"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.9"
@@ -16,40 +16,61 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Manufacturing",
+    "Intended Audience :: Developers",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering",
     "Topic :: Scientific/Engineering :: Physics",
     "Topic :: Scientific/Engineering :: Chemistry",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
 ]
 keywords = [
     "thermocouple",
     "temperature",
     "voltage",
-    "nist",
+    "nist", 
     "measurement",
     "sensor",
     "instrumentation",
     "seebeck",
     "cold-junction",
+    "oop",
+    "abstract-base-class",
+    "factory-pattern",
+    "polynomials",
 ]
 
 [project.urls]
-Homepage = "https://github.com/your-username/python-thermocouples"
-Documentation = "https://github.com/your-username/python-thermocouples#readme"
-Repository = "https://github.com/your-username/python-thermocouples.git"
-"Bug Tracker" = "https://github.com/your-username/python-thermocouples/issues"
+Homepage = "https://github.com/RogerGdot/thermocouples"
+Documentation = "https://github.com/RogerGdot/thermocouples#readme"
+Repository = "https://github.com/RogerGdot/thermocouples.git"
+"Bug Tracker" = "https://github.com/RogerGdot/thermocouples/issues"
+"Source Code" = "https://github.com/RogerGdot/thermocouples"
+"Changelog" = "https://github.com/RogerGdot/thermocouples/releases"
 
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",
-    "pytest-cov",
-    "black",
-    "flake8",
+    "pytest-cov>=4.0",
+    "black>=23.0",
+    "flake8>=6.0",
+    "mypy>=1.0",
+    "build>=0.10.0",
+    "twine>=4.0.0",
+]
+testing = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+docs = [
+    "sphinx>=5.0",
+    "sphinx-rtd-theme>=1.0",
 ]
 
 [tool.setuptools.packages.find]
