@@ -12,7 +12,7 @@ A comprehensive, high-accuracy thermocouple calculation library for Python with 
 - **🌡️ Voltage to Temperature Conversion**: Convert voltage (V) to temperature (°C)
 - **📊 Seebeck Coefficient Calculation**: Get the Seebeck coefficient (µV/K) at any temperature
 - **📈 Temperature Derivative of Seebeck**: Calculate dSeebeck/dT (nV/K²) for advanced analysis
-- **❄️ Cold Junction Compensation**: Built-in support for reference junction temperature compensation
+- **❄️ Cold Junction Compensation**: Built-in `volt_to_temp_with_cjc()` method for reference junction temperature compensation
 - **🔬 Individual Thermocouple Leg Calculations**: 
   - Voltage calculations for positive and negative legs separately
   - Seebeck coefficient calculations for positive and negative legs separately
@@ -90,11 +90,20 @@ dsdt = tc_k.temp_to_dsdt(200.5)        # Temperature derivative
 hot_junction_temp = 500.0  # °C
 cold_junction_temp = 25.0   # °C (room temperature)
 
-# Calculate voltage with cold junction at 25°C instead of 0°C
+# Method 1: Built-in Cold Junction Compensation (Recommended)
+measured_voltage = 0.019665  # V (voltage measured by your instrument)
+actual_temp = tc_k.volt_to_temp_with_cjc(measured_voltage, cold_junction_temp)
+print(f"Actual temperature: {actual_temp:.1f}°C")
+
+# Method 2: Manual calculation (for understanding)
 voltage_hot = tc_k.temp_to_volt(hot_junction_temp)
 voltage_cold = tc_k.temp_to_volt(cold_junction_temp)
-actual_voltage = voltage_hot - voltage_cold
-print(f"Actual measured voltage: {actual_voltage:.6f} V")
+expected_measurement = voltage_hot - voltage_cold
+print(f"Expected measured voltage: {expected_measurement:.6f} V")
+
+# Verify with built-in CJC function
+calculated_temp = tc_k.volt_to_temp_with_cjc(expected_measurement, cold_junction_temp)
+print(f"Calculated temperature: {calculated_temp:.1f}°C")
 
 # Individual thermocouple leg analysis
 tc_e = tc.get_thermocouple("E")
@@ -172,6 +181,7 @@ Each thermocouple instance provides:
 #### Core Conversion Methods
 - `temp_to_volt(temperature: float) -> float`
 - `volt_to_temp(voltage: float) -> float`
+- `volt_to_temp_with_cjc(voltage: float, ref_temp: float) -> float`
 - `temp_to_seebeck(temperature: float) -> float` 
 - `temp_to_dsdt(temperature: float) -> float`
 

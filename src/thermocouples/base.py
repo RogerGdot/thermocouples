@@ -177,9 +177,9 @@ class Thermocouple(ABC):
         Returns:
             Actual temperature in degrees Celsius
         """
-        ref_voltage = self.temp_to_voltage(ref_temp)
+        ref_voltage = self.temp_to_volt(ref_temp)
         total_voltage = voltage + ref_voltage
-        return self.voltage_to_temp(total_voltage)
+        return self.volt_to_temp(total_voltage)
 
     def temp_to_seebeck(self, temp_c: float) -> float:
         """

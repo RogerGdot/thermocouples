@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2025-08-16
+
+### Fixed
+- **Bugfix**: Corrected `temp_to_dsdt()` method calculation for accurate Seebeck coefficient derivative computation
+- Improved numerical stability in temperature derivative calculations
+- Enhanced accuracy for all thermocouple types in sensitivity analysis
+
+### Documentation
+- Updated README to properly showcase `volt_to_temp_with_cjc()` cold junction compensation method
+- Clarified API documentation with accurate method examples
+- Added comprehensive cold junction compensation usage examples
+
 ## [2.1.0] - 2025-08-15
 
 ### Changed
