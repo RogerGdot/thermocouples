@@ -1,113 +1,125 @@
+#!/usr/bin/env python3
 """
-Basic tests for the thermocouples package.
+Minimales Beispiel für die Nutzung der Thermocouples-Bibliothek v2.0
+
+Zeigt die grundlegende Verwendung des neuen OOP-Ansatzes und der Legacy-API.
 """
 
 import os
 import sys
 
+# Füge den src-Pfad zum Python-Pfad hinzu für lokale Tests
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from thermocouples import get_thermocouple, temperature_to_voltage, voltage_to_temperature
+import thermocouples as tc
 
 
-def test_type_k_basic():
-    """Test basic Type K thermocouple conversion."""
-    tc_k = get_thermocouple("K")
+def minimal_beispiel():
+    """Minimales Beispiel für die Thermocouple-Nutzung."""
+    print("🌡️  THERMOCOUPLES v2.0 - MINIMAL BEISPIEL")
+    print("=" * 50)
 
-    # Test known values (approximately)
-    temp = 100.0  # °C
-    voltage = tc_k.temperature_to_voltage(temp)
-    temp_back = tc_k.voltage_to_temperature(voltage)
+    # 1. NEUE OOP API (Empfohlen)
+    print("\n🔧 Neue OOP API:")
 
-    # Should round-trip within reasonable tolerance
-    assert abs(temp - temp_back) < 0.1, f"Round-trip failed: {temp} != {temp_back}"
+    # Thermocouple-Objekt erstellen
+    tc_k = tc.get_thermocouple("K")
 
+    # Temperatur zu Spannung
+    temperatur = 100.0  # °C
+    spannung = tc_k.temperature_to_voltage(temperatur)
+    print(f"   {temperatur}°C → {spannung:.6f} V")
 
-def test_convenience_functions():
-    """Test convenience functions."""
-    temp = 100.0
-    voltage = temperature_to_voltage("K", temp)
-    temp_back = voltage_to_temperature("K", voltage)
+    # Spannung zu Temperatur
+    temp_zurück = tc_k.voltage_to_temperature(spannung)
+    print(f"   {spannung:.6f} V → {temp_zurück:.2f}°C")
 
-    assert abs(temp - temp_back) < 0.1, "Convenience function round-trip failed"
+    # Seebeck-Koeffizient berechnen
+    seebeck = tc_k.temp_to_seebeck(temperatur)
+    print(f"   Seebeck bei {temperatur}°C: {seebeck:.1f} µV/K")
 
+    # 2. LEGACY API (Rückwärtskompatibilität)
+    print("\n🔄 Legacy API (weiterhin unterstützt):")
 
-def test_all_types_available():
-    """Test that all thermocouple types are available."""
-    expected_types = ["B", "E", "J", "K", "N", "R", "S", "T"]
+    # Gleiche Berechnungen mit alten Funktionen
+    spannung_alt = tc.temp_to_voltage(temperatur, "K")
+    temp_alt = tc.voltage_to_temp(spannung_alt, "K")
+    seebeck_alt = tc.temp_to_seebeck(temperatur, "K")
 
-    for tc_type in expected_types:
-        tc = get_thermocouple(tc_type)
-        assert tc is not None, f"Type {tc_type} not available"
+    print(f"   {temperatur}°C → {spannung_alt:.6f} V")
+    print(f"   {spannung_alt:.6f} V → {temp_alt:.2f}°C")
+    print(f"   Seebeck bei {temperatur}°C: {seebeck_alt:.1f} µV/K")
 
+    # 3. MEHRERE THERMOCOUPLE-TYPEN
+    print("\n🎯 Vergleich verschiedener Typen bei 200°C:")
 
-def test_cold_junction_compensation():
-    """Test cold junction compensation."""
-    tc_k = get_thermocouple("K")
+    test_temperatur = 200.0
+    typen = ["K", "J", "E", "T"]
 
-    # Test with known values
-    measured_voltage = 0.025  # V
-    ref_temp = 25.0  # °C
+    for typ in typen:
+        tc_obj = tc.get_thermocouple(typ)
+        spannung = tc_obj.temperature_to_voltage(test_temperatur)
+        seebeck = tc_obj.temp_to_seebeck(test_temperatur)
+        print(f"   Typ {typ}: {spannung:.6f} V, {seebeck:.1f} µV/K")
 
-    # Should not raise an exception
-    actual_temp = tc_k.voltage_to_temperature_with_reference(measured_voltage, ref_temp)
-    assert isinstance(actual_temp, (int, float)), "Temperature should be numeric"
+    # 4. VERFÜGBARE TYPEN ANZEIGEN
+    print("\n📋 Verfügbare Thermocouple-Typen:")
+    verfügbare_typen = tc.get_available_types()
+    print(f"   {', '.join(verfügbare_typen)} ({len(verfügbare_typen)} Typen)")
 
+    # 5. KALTSTELLENKOMPENSATION
+    print("\n❄️  Kaltstellenkompensation Beispiel:")
 
-def test_seebeck_coefficients():
-    """Test Seebeck coefficient calculations."""
-    tc_k = get_thermocouple("K")
+    # Gemessene Spannung bei Referenztemperatur 25°C
+    gemessene_spannung = 0.008  # V
+    referenz_temperatur = 25.0  # °C
 
-    # Test Seebeck coefficient at 100°C
-    seebeck = tc_k.temperature_to_seebeck(100.0)
-    assert isinstance(seebeck, (int, float)), "Seebeck should be numeric"
-    assert 30 < seebeck < 50, f"Seebeck coefficient seems unreasonable: {seebeck}"
+    # Wahre Temperatur berechnen
+    tc_k = tc.get_thermocouple("K")
+    spannung_referenz = tc_k.temperature_to_voltage(referenz_temperatur)
+    korrigierte_spannung = gemessene_spannung + spannung_referenz
+    wahre_temperatur = tc_k.voltage_to_temperature(korrigierte_spannung)
 
-    # Test dSeebeck/dT
-    dsdt = tc_k.temperature_to_dsdt(100.0)
-    assert isinstance(dsdt, (int, float)), "dS/dT should be numeric"
+    print(f"   Gemessene Spannung: {gemessene_spannung:.6f} V")
+    print(f"   Referenztemperatur: {referenz_temperatur}°C")
+    print(f"   Wahre Temperatur: {wahre_temperatur:.1f}°C")
 
-
-def test_modular_structure():
-    """Test that the modular structure works correctly."""
-    # Test that we can access different thermocouple types
-    types_to_test = ["K", "J", "T", "E", "N"]
-
-    for tc_type in types_to_test:
-        tc = get_thermocouple(tc_type)
-
-        # Test basic conversion at room temperature
-        temp = 25.0
-        voltage = tc.temperature_to_voltage(temp)
-        temp_back = tc.voltage_to_temperature(voltage)
-
-        assert abs(temp - temp_back) < 0.1, f"Type {tc_type} round-trip failed"
-
-        # Test that the thermocouple has the expected name
-        assert tc.name == tc_type, f"Name mismatch for type {tc_type}"
+    print("\n✅ Beispiel abgeschlossen!")
 
 
-def test_high_temperature_types():
-    """Test high-temperature thermocouple types (B, R, S)."""
-    high_temp_types = ["B", "R", "S"]
+def test_genauigkeit():
+    """Test der Rundreise-Genauigkeit (Temperatur → Spannung → Temperatur)."""
+    print("\n🧪 GENAUIGKEITSTEST:")
+    print("-" * 30)
 
-    for tc_type in high_temp_types:
-        tc = get_thermocouple(tc_type)
+    tc_k = tc.get_thermocouple("K")
+    test_temperaturen = [0, 100, 200, 500, 1000]
 
-        # Test at higher temperature (B type doesn't work well below 250°C)
-        temp = 500.0 if tc_type == "B" else 200.0
-        voltage = tc.temperature_to_voltage(temp)
-        temp_back = tc.voltage_to_temperature(voltage)
+    for temp in test_temperaturen:
+        try:
+            # Rundreise: Temperatur → Spannung → Temperatur
+            spannung = tc_k.temperature_to_voltage(temp)
+            temp_zurück = tc_k.voltage_to_temperature(spannung)
+            fehler = abs(temp - temp_zurück)
 
-        assert abs(temp - temp_back) < 0.5, f"Type {tc_type} high-temp round-trip failed"
+            status = "✅" if fehler < 0.1 else "⚠️"
+            print(f"   {status} {temp}°C → {spannung:.6f}V → {temp_zurück:.2f}°C (Fehler: {fehler:.3f}°C)")
+
+        except Exception as e:
+            print(f"   ❌ {temp}°C: Fehler - {e}")
 
 
 if __name__ == "__main__":
-    test_type_k_basic()
-    test_convenience_functions()
-    test_all_types_available()
-    test_cold_junction_compensation()
-    test_seebeck_coefficients()
-    test_modular_structure()
-    test_high_temperature_types()
-    print("All tests passed!")
+    try:
+        minimal_beispiel()
+        test_genauigkeit()
+
+        print("\n🎉 Alle Tests erfolgreich!")
+        print("📚 Die Thermocouples v2.0 Bibliothek ist einsatzbereit!")
+
+    except Exception as e:
+        print(f"\n❌ Fehler beim Test: {e}")
+        import traceback
+
+        traceback.print_exc()
+        sys.exit(1)

@@ -4,165 +4,275 @@
 [![Python](https://img.shields.io/pypi/pyversions/thermocouples.svg)](https://pypi.org/project/thermocouples/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A comprehensive, high-accuracy thermocouple calculation library for Python, implementing all standard thermocouple types with NIST-compliant polynomial calculations.
+A comprehensive, high-accuracy thermocouple calculation library for Python, implementing all standard thermocouple types with NIST-compliant polynomial calculations using modern object-oriented architecture.
 
 ## Features
 
-- **Temperature to Voltage Conversion**: Convert temperature (°C) to thermoelectric voltage (V)
-- **Voltage to Temperature Conversion**: Convert voltage (V) to temperature (°C)
-- **Seebeck Coefficient Calculation**: Get the Seebeck coefficient (µV/K) at any temperature
-- **Temperature Derivative of Seebeck**: Calculate dSeebeck/dT (nV/K²) for advanced analysis
-- **Cold Junction Compensation**: Built-in support for reference junction temperature compensation
-- **Individual Thermocouple Leg Calculations**: 
+- **🎯 Temperature to Voltage Conversion**: Convert temperature (°C) to thermoelectric voltage (V)
+- **🌡️ Voltage to Temperature Conversion**: Convert voltage (V) to temperature (°C)
+- **📊 Seebeck Coefficient Calculation**: Get the Seebeck coefficient (µV/K) at any temperature
+- **📈 Temperature Derivative of Seebeck**: Calculate dSeebeck/dT (nV/K²) for advanced analysis
+- **❄️ Cold Junction Compensation**: Built-in support for reference junction temperature compensation
+- **🔬 Individual Thermocouple Leg Calculations**: 
   - Voltage calculations for positive and negative legs separately
   - Seebeck coefficient calculations for positive and negative legs separately
-- **High Accuracy**: Based on NIST Monograph 175 polynomial coefficients
-- **All Standard Types**: Supports B, E, J, K, N, R, S, and T type thermocouples
-- **Pure Python**: No external dependencies required
-- **Well Tested**: Comprehensive test suite ensuring accuracy
+- **🎯 High Accuracy**: Based on NIST Monograph 175 polynomial coefficients
+- **✅ All Standard Types**: Supports B, E, J, K, N, R, S, and T type thermocouples
+- **🐍 Pure Python**: No external dependencies required
+- **🏗️ Modern OOP Architecture**: Clean, maintainable object-oriented design
+- **🧪 Well Tested**: Comprehensive test suite ensuring accuracy
+- **📚 Type Safe**: Full type hints for better IDE support
+
+## What's New in Version 2.0
+
+**🚀 Complete Architectural Redesign:**
+- **Object-Oriented Design**: Each thermocouple type is now a class inheriting from an abstract base class
+- **Factory Pattern**: Simple `get_thermocouple("K")` function for easy instantiation
+- **Type Safety**: Full Python type hints throughout the codebase
+- **Better Maintainability**: Cleaner code structure makes adding new types trivial
+- **100% Backward Compatibility**: All existing APIs continue to work identically
 
 ## Supported Thermocouple Types
 
-| Type | Temperature Range | Materials |
-|------|------------------|-----------|
-| **B** | 0°C to 1820°C | Pt-30%Rh / Pt-6%Rh |
-| **E** | -270°C to 1000°C | Ni-Cr / Cu-Ni |
-| **J** | -210°C to 1200°C | Fe / Cu-Ni |
-| **K** | -270°C to 1372°C | Ni-Cr / Ni-Al |
-| **N** | -270°C to 1300°C | Ni-Cr-Si / Ni-Si |
-| **R** | -50°C to 1768°C | Pt-13%Rh / Pt |
-| **S** | -50°C to 1768°C | Pt-10%Rh / Pt |
-| **T** | -270°C to 400°C | Cu / Cu-Ni |
+| Type | Temperature Range | Materials | Application |
+|------|------------------|-----------|-------------|
+| **B** | 0°C to 1820°C | Pt-30%Rh / Pt-6%Rh | Ultra-high temperature |
+| **E** | -270°C to 1000°C | Ni-Cr / Cu-Ni | Highest sensitivity |
+| **K** | -270°C to 1372°C | Ni-Cr / Ni-Al | Most popular, general purpose |
+| **N** | -270°C to 1300°C | Ni-Cr-Si / Ni-Si | Improved K-type |
+| **R** | -50°C to 1768°C | Pt-13%Rh / Pt | High temperature, precious metal |
+| **S** | -50°C to 1768°C | Pt-10%Rh / Pt | High temperature, precious metal |
+| **T** | -270°C to 400°C | Cu / Cu-Ni | Cryogenic applications |
 
-## Installation
+## Quick Start
+
+### Installation
 
 ```bash
 pip install thermocouples
 ```
 
-## Quick Start
+### Basic Usage
 
 ```python
-from thermocouples import get_thermocouple, temperature_to_voltage
+import thermocouples as tc
 
-# Method 1: Using thermocouple instance
-tc_k = get_thermocouple("K")
-voltage = tc_k.temperature_to_voltage(100.0)  # 100°C → 0.004096 V
-temp = tc_k.voltage_to_temperature(0.004096)  # 0.004096 V → 100°C
+# Temperature to voltage conversion
+tc_type_k = tc.get_thermocouple("K")
+voltage = tc_type_k.temperature_to_voltage(100.0)  # 4.096 mV at 100°C
+print(f"K-type at 100°C: {voltage:.3f} mV")
 
-# Method 2: Using convenience functions
-voltage = temperature_to_voltage("K", 100.0)
-temp = voltage_to_temperature("K", 0.004096)
+# Voltage to temperature conversion  
+temperature = tc_type_k.voltage_to_temperature(0.004096)  # Back to ~100°C
+print(f"K-type at 4.096 mV: {temperature:.1f}°C")
 
-# Cold junction compensation (measuring with reference temperature)
-measured_voltage = 0.025  # V
-reference_temp = 25.0     # °C
-actual_temp = tc_k.voltage_to_temperature_with_reference(
-    measured_voltage, reference_temp
-)
+# Legacy API (still supported)
+voltage = tc.temp_to_voltage(100.0, "K")
+temperature = tc.voltage_to_temp(0.004096, "K")
 ```
 
-## Advanced Usage
-
-### Seebeck Coefficient Calculation
+### Advanced Usage
 
 ```python
-tc_k = get_thermocouple("K")
+import thermocouples as tc
 
-# Calculate Seebeck coefficient (sensitivity) at 100°C
-seebeck = tc_k.temperature_to_seebeck(100.0)  # Returns µV/K
-print(f"Sensitivity at 100°C: {seebeck:.2f} µV/K")
+# Get a thermocouple instance
+tc_k = tc.get_thermocouple("K")
 
-# Calculate temperature coefficient of Seebeck coefficient
-dsdt = tc_k.temperature_to_dsdt(100.0)  # Returns nV/K²
-print(f"dS/dT at 100°C: {dsdt:.2f} nV/K²")
+# High-precision calculations
+voltage = tc_k.temperature_to_voltage(200.5)
+seebeck = tc_k.temp_to_seebeck(200.5)  # Seebeck coefficient
+dsdt = tc_k.temp_to_dsdt(200.5)        # Temperature derivative
+
+# Cold junction compensation
+hot_junction_temp = 500.0  # °C
+cold_junction_temp = 25.0   # °C (room temperature)
+
+# Calculate voltage with cold junction at 25°C instead of 0°C
+voltage_hot = tc_k.temperature_to_voltage(hot_junction_temp)
+voltage_cold = tc_k.temperature_to_voltage(cold_junction_temp)
+actual_voltage = voltage_hot - voltage_cold
+print(f"Actual measured voltage: {actual_voltage:.6f} V")
+
+# Individual thermocouple leg analysis
+tc_e = tc.get_thermocouple("E")
+
+# Positive leg (Ni-Cr) calculations
+pos_voltage = tc_e.pos_temp_to_voltage(300.0)
+pos_seebeck = tc_e.pos_temp_to_seebeck(300.0)
+
+# Negative leg (Cu-Ni) calculations  
+neg_voltage = tc_e.neg_temp_to_voltage(300.0)
+neg_seebeck = tc_e.neg_temp_to_seebeck(300.0)
+
+print(f"E-type at 300°C:")
+print(f"  Positive leg: {pos_voltage:.6f} V, {pos_seebeck:.3f} µV/K")
+print(f"  Negative leg: {neg_voltage:.6f} V, {neg_seebeck:.3f} µV/K")
+print(f"  Difference:   {pos_voltage - neg_voltage:.6f} V")
 ```
 
-### Individual Thermocouple Legs
-
-For advanced applications, you can calculate voltages for individual thermocouple legs:
+### Working with Multiple Types
 
 ```python
-# Get voltage for positive leg only (Ni-Cr for Type K)
-v_pos = tc_k.temperature_to_volt_pos_leg(100.0)  # Returns voltage in V
+import thermocouples as tc
 
-# Get voltage for negative leg only (Ni-Al for Type K)
-v_neg = tc_k.temperature_to_volt_neg_leg(100.0)  # Returns voltage in V
+# Compare different thermocouple types at the same temperature
+temperature = 400.0  # °C
+types = ["B", "E", "J", "K", "N", "R", "S", "T"]
 
-# The total thermocouple voltage is the difference
-v_total = v_pos - v_neg  # Should equal tc_k.temperature_to_voltage(100.0)
+print(f"Voltages at {temperature}°C:")
+for tc_type in types:
+    if tc_type == "B" and temperature < 250:
+        continue  # B-type has limited range at low temperatures
+    
+    thermocouple = tc.get_thermocouple(tc_type)
+    voltage = thermocouple.temperature_to_voltage(temperature)
+    seebeck = thermocouple.temp_to_seebeck(temperature)
+    print(f"  Type {tc_type}: {voltage:.6f} V (Seebeck: {seebeck:.1f} µV/K)")
 ```
 
-### Individual Leg Seebeck Coefficients
+## Architecture Overview
 
-You can also calculate Seebeck coefficients for individual thermocouple legs:
+**Version 2.0** features a clean object-oriented architecture:
 
-```python
-# Get Seebeck coefficient for positive leg (Ni-Cr for Type K)
-seebeck_pos = tc_k.temperature_to_seebeck_pos_leg(100.0)  # Returns µV/K
-print(f"Positive leg Seebeck at 100°C: {seebeck_pos:.3f} µV/K")
-
-# Get Seebeck coefficient for negative leg (Ni-Al for Type K)
-seebeck_neg = tc_k.temperature_to_seebeck_neg_leg(100.0)  # Returns µV/K
-print(f"Negative leg Seebeck at 100°C: {seebeck_neg:.3f} µV/K")
-
-# The total Seebeck coefficient is the difference
-seebeck_total = seebeck_pos - seebeck_neg  # Should equal tc_k.temperature_to_seebeck(100.0)
-print(f"Total Seebeck coefficient: {seebeck_total:.3f} µV/K")
 ```
+thermocouples/
+├── base.py              # Abstract base class with common calculation logic
+├── registry.py          # Factory functions for creating thermocouple instances  
+├── types/
+│   ├── type_b_class.py  # B-type thermocouple implementation
+│   ├── type_e_class.py  # E-type thermocouple implementation
+│   ├── type_j_class.py  # J-type thermocouple implementation
+│   ├── type_k_class.py  # K-type thermocouple implementation
+│   ├── type_n_class.py  # N-type thermocouple implementation
+│   ├── type_r_class.py  # R-type thermocouple implementation
+│   ├── type_s_class.py  # S-type thermocouple implementation
+│   └── type_t_class.py  # T-type thermocouple implementation
+└── __init__.py          # Public API with backward compatibility
+```
+
+Each thermocouple type inherits from the abstract `Thermocouple` base class, ensuring:
+- **Consistent Interface**: All types support the same methods
+- **Code Reuse**: Common calculation logic is shared
+- **Type Safety**: Full Python type hints throughout
+- **Extensibility**: Adding new types is straightforward
 
 ## API Reference
 
-### ThermocoupleType Class
+### Factory Functions
 
-```python
-class ThermocoupleType:
-    def temperature_to_voltage(self, temp_c: float) -> float:
-        """Convert temperature (°C) to voltage (V)"""
-        
-    def voltage_to_temperature(self, voltage: float) -> float:
-        """Convert voltage (V) to temperature (°C)"""
-        
-    def voltage_to_temperature_with_reference(self, voltage: float, ref_temp: float) -> float:
-        """Convert voltage (V) to temperature (°C) with cold junction compensation"""
-        
-    def temperature_to_seebeck(self, temp_c: float) -> float:
-        """Calculate Seebeck coefficient (µV/K) at temperature"""
-        
-    def temperature_to_dsdt(self, temp_c: float) -> float:
-        """Calculate dSeebeck/dT (nV/K²) at temperature"""
-        
-    def temperature_to_volt_pos_leg(self, temp_c: float) -> float:
-        """Calculate the thermoelectric voltage of the positive leg at a given temperature."""
-        
-    def temperature_to_volt_neg_leg(self, temp_c: float) -> float:
-        """Calculate the thermoelectric voltage of the negative leg at a given temperature."""
-        
-    def temperature_to_seebeck_pos_leg(self, temp_c: float) -> float:
-        """Calculate the Seebeck coefficient of the positive leg at a given temperature."""
-        
-    def temperature_to_seebeck_neg_leg(self, temp_c: float) -> float:
-        """Calculate the Seebeck coefficient of the negative leg at a given temperature."""
-```
+- `get_thermocouple(tc_type: str) -> Thermocouple`: Get a thermocouple instance
+- `get_available_types() -> List[str]`: List all supported thermocouple types
+
+### Legacy Functions (maintained for backward compatibility)
+
+- `temp_to_voltage(temperature: float, tc_type: str, cold_junction: float = 0.0) -> float`
+- `voltage_to_temp(voltage: float, tc_type: str, cold_junction: float = 0.0) -> float`  
+- `temp_to_seebeck(temperature: float, tc_type: str) -> float`
+- `temp_to_dsdt(temperature: float, tc_type: str) -> float`
+
+### Thermocouple Class Methods
+
+Each thermocouple instance provides:
+
+#### Core Conversion Methods
+- `temperature_to_voltage(temperature: float) -> float`
+- `voltage_to_temperature(voltage: float) -> float`
+- `temp_to_seebeck(temperature: float) -> float` 
+- `temp_to_dsdt(temperature: float) -> float`
+
+#### Individual Leg Methods
+- `pos_temp_to_voltage(temperature: float) -> float`
+- `neg_temp_to_voltage(temperature: float) -> float`
+- `pos_temp_to_seebeck(temperature: float) -> float`
+- `neg_temp_to_seebeck(temperature: float) -> float`
+
+#### Properties
+- `tc_type: str` - Thermocouple type identifier
+- `temperature_range: Tuple[float, float]` - Valid temperature range
+- `pos_material: str` - Positive leg material composition
+- `neg_material: str` - Negative leg material composition
 
 ## Requirements
 
 - **Python**: 3.9+
 - **Dependencies**: None (pure Python implementation)
 
-## Testing
+## Accuracy and Validation
 
-Run the built-in test when installing:
+This library implements the official NIST ITS-90 thermocouple equations from **NIST Monograph 175** with rigorous precision:
+
+- **Temperature-to-Voltage**: Polynomial evaluation using NIST coefficients
+- **Voltage-to-Temperature**: Iterative solution with Newton-Raphson method
+- **Individual Leg Calculations**: Separate positive and negative leg polynomials
+- **Exponential Corrections**: Applied for specific types (K, N) where required
+- **High Precision**: Maintains accuracy within NIST tolerance specifications
+
+### Temperature Ranges by Type
+
+| Type | Lower Limit | Upper Limit | Note |
+|------|-------------|-------------|------|
+| B | 0°C | 1820°C | Limited accuracy below 250°C |
+| E | -270°C | 1000°C | Highest sensitivity of all types |
+| J | -210°C | 1200°C | Iron oxidizes above 750°C in air |
+| K | -270°C | 1372°C | Most common general-purpose type |
+| N | -270°C | 1300°C | Improved drift characteristics vs. K |
+| R | -50°C | 1768°C | Precious metal, high temperature |
+| S | -50°C | 1768°C | Precious metal, similar to R |
+| T | -270°C | 400°C | Excellent for cryogenic applications |
+
+## Installation & Testing
+
+### Install from PyPI
 
 ```bash
-python -m thermocouples
+pip install thermocouples
 ```
 
-Or run the test with help information:
+### Run Built-in Tests
 
 ```bash
-python -m thermocouples --help
+# Quick validation test
+python -c "import thermocouples as tc; print('✓ Library loaded successfully')"
+
+# Compare multiple types
+python -c "
+import thermocouples as tc
+for t in ['K', 'J', 'T']:
+    tc_obj = tc.get_thermocouple(t)
+    v = tc_obj.temperature_to_voltage(100.0)
+    print(f'Type {t}: {v:.6f} V at 100°C')
+"
 ```
+
+## Migration from Version 1.x
+
+**Version 2.0 is 100% backward compatible**. Existing code will continue to work without changes:
+
+```python
+# Old API (still works)
+import thermocouples as tc
+voltage = tc.temp_to_voltage(100.0, "K")
+temperature = tc.voltage_to_temp(0.004096, "K")
+
+# New API (recommended)
+import thermocouples as tc
+tc_k = tc.get_thermocouple("K")
+voltage = tc_k.temperature_to_voltage(100.0)
+temperature = tc_k.voltage_to_temperature(0.004096)
+```
+
+The new OOP approach offers:
+- **Better Performance**: Instantiate once, use many times
+- **Type Safety**: Full Python type hints
+- **IDE Support**: Better autocomplete and error detection
+- **Code Clarity**: More intuitive object-oriented interface
+
+## Contributors
+
+- **Dipl.-Ing. Gregor Oppitz** - *Original Author*  
+  *Deutsches Zentrum für Luft- und Raumfahrt (DLR)*
+- **Version 2.0 Architecture** - *Complete OOP refactoring*
 
 ## License
 
@@ -170,18 +280,16 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please feel free to submit a Pull Request. Areas for contribution:
+- Additional thermocouple types (C, G, M, etc.)
+- Performance optimizations
+- Enhanced documentation
+- Test coverage improvements
 
 ## Disclaimer
 
 ⚠️ **Important**: While this library implements NIST-standard calculations with high precision, users are responsible for validating results for their specific applications. For critical measurements or safety-related applications, please refer directly to NIST Monograph 175 or conduct independent verification.
 
-## Author
-
-**Dipl.-Ing. Gregor Oppitz**  
-*Deutsches Zentrum für Luft- und Raumfahrt (DLR)*
-
 ---
 
-*If this library helped your project, please consider giving it a ⭐ on GitHub!*
 *If this library helped your project, please consider giving it a ⭐ on GitHub!*
