@@ -28,63 +28,63 @@ class Thermocouple(ABC):
 
     @property
     @abstractmethod
-    def temp_to_microvolt_data(self) -> list[tuple[tuple[float, float], list[float]]]:
+    def _temp_to_microvolt_data(self) -> list[tuple[tuple[float, float], list[float]]]:
         """Get temperature to microvolt polynomial coefficients."""
         pass
 
     @property
     @abstractmethod
-    def microvolt_to_temp_data(self) -> list[tuple[tuple[float, float], list[float]]]:
+    def _microvolt_to_temp_data(self) -> list[tuple[tuple[float, float], list[float]]]:
         """Get microvolt to temperature polynomial coefficients."""
         pass
 
     @property
-    def temp_to_seebeck_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
+    def _temp_to_seebeck_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
         """Get temperature to Seebeck coefficient polynomial coefficients."""
         return None
 
     @property
-    def temp_to_dsdt_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
+    def _temp_to_dsdt_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
         """Get temperature to dSeebeck/dT polynomial coefficients."""
         return None
 
     @property
-    def temp_to_microvolt_pos_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
+    def _temp_to_microvolt_pos_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
         """Get temperature to microvolt polynomial coefficients for positive leg."""
         return None
 
     @property
-    def temp_to_microvolt_neg_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
+    def _temp_to_microvolt_neg_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
         """Get temperature to microvolt polynomial coefficients for negative leg."""
         return None
 
     @property
-    def temp_to_seebeck_pos_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
+    def _temp_to_seebeck_pos_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
         """Get temperature to Seebeck coefficient polynomial coefficients for positive leg."""
         return None
 
     @property
-    def temp_to_seebeck_neg_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
+    def _temp_to_seebeck_neg_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
         """Get temperature to Seebeck coefficient polynomial coefficients for negative leg."""
         return None
 
     @property
-    def microvolt_expo_function(self) -> Optional[Callable[[float], float]]:
+    def _microvolt_expo_function(self) -> Optional[Callable[[float], float]]:
         """Get exponential correction function for voltage calculation."""
         return None
 
     @property
-    def seebeck_expo_function(self) -> Optional[Callable[[float], float]]:
+    def _seebeck_expo_function(self) -> Optional[Callable[[float], float]]:
         """Get exponential correction function for Seebeck coefficient calculation."""
         return None
 
     @property
-    def dsdt_expo_function(self) -> Optional[Callable[[float], float]]:
+    def _dsdt_expo_function(self) -> Optional[Callable[[float], float]]:
         """Get exponential correction function for dSeebeck/dT calculation."""
         return None
 
     @property
-    def microvolt_neg_leg_expo_function(self) -> Optional[Callable[[float], float]]:
+    def _microvolt_neg_leg_expo_function(self) -> Optional[Callable[[float], float]]:
         """Get exponential correction function for negative leg voltage calculation."""
         return None
 
@@ -132,54 +132,41 @@ class Thermocouple(ABC):
 
         raise ValueError(f"Value {value} is outside valid range for thermocouple type {self.name}")
 
-    def temperature_to_voltage(self, temp_c: float, reference_junction_temp: float = 0.0) -> float:
+    def temp_to_volt(self, temp_c: float) -> float:
         """
         Convert temperature (°C) to thermoelectric voltage (V).
 
+        This assumes reference junction at 0°C.
+
         Args:
             temp_c: Temperature in degrees Celsius
-            reference_junction_temp: Reference junction temperature in degrees Celsius (default: 0.0)
 
         Returns:
             Thermoelectric voltage in volts (V)
         """
-        # Calculate voltage at measurement temperature
-        microvolt_meas = self._find_range_and_evaluate(temp_c, self.temp_to_microvolt_data, self.microvolt_expo_function)
+        # Calculate voltage at measurement temperature (reference = 0°C)
+        microvolt = self._find_range_and_evaluate(temp_c, self._temp_to_microvolt_data, self._microvolt_expo_function)
+        return microvolt / 1e6  # Convert microvolts to volts
 
-        # Calculate voltage at reference junction temperature
-        if reference_junction_temp != 0.0:
-            microvolt_ref = self._find_range_and_evaluate(reference_junction_temp, self.temp_to_microvolt_data, self.microvolt_expo_function)
-        else:
-            microvolt_ref = 0.0
-
-        # Return difference (voltage at measurement - voltage at reference)
-        return (microvolt_meas - microvolt_ref) / 1e6  # Convert microvolts to volts
-
-    def voltage_to_temperature(self, voltage: float, reference_junction_temp: float = 0.0) -> float:
+    def volt_to_temp(self, voltage: float) -> float:
         """
         Convert thermoelectric voltage (V) to temperature (°C).
 
+        This assumes reference junction at 0°C.
+
         Args:
             voltage: Thermoelectric voltage in volts (V)
-            reference_junction_temp: Reference junction temperature in degrees Celsius (default: 0.0)
 
         Returns:
             Temperature in degrees Celsius
         """
-        # Add reference junction compensation
-        if reference_junction_temp != 0.0:
-            microvolt_ref = self._find_range_and_evaluate(reference_junction_temp, self.temp_to_microvolt_data, self.microvolt_expo_function)
-            voltage_compensated = voltage + (microvolt_ref / 1e6)
-        else:
-            voltage_compensated = voltage
-
         # Convert to microvolts for calculation
-        microvolt = voltage_compensated * 1e6
+        microvolt = voltage * 1e6
 
         # Find temperature using inverse polynomial
-        return self._find_range_and_evaluate(microvolt, self.microvolt_to_temp_data)
+        return self._find_range_and_evaluate(microvolt, self._microvolt_to_temp_data)
 
-    def voltage_to_temperature_with_reference(self, voltage: float, ref_temp: float) -> float:
+    def volt_to_temp_with_cjc(self, voltage: float, ref_temp: float) -> float:
         """
         Convert measured voltage to temperature with cold junction compensation.
 
@@ -190,11 +177,11 @@ class Thermocouple(ABC):
         Returns:
             Actual temperature in degrees Celsius
         """
-        ref_voltage = self.temperature_to_voltage(ref_temp)
+        ref_voltage = self.temp_to_voltage(ref_temp)
         total_voltage = voltage + ref_voltage
-        return self.voltage_to_temperature(total_voltage)
+        return self.voltage_to_temp(total_voltage)
 
-    def temperature_to_seebeck(self, temp_c: float) -> float:
+    def temp_to_seebeck(self, temp_c: float) -> float:
         """
         Calculate Seebeck coefficient (µV/K) at given temperature.
 
@@ -204,36 +191,12 @@ class Thermocouple(ABC):
         Returns:
             Seebeck coefficient in microvolts per Kelvin (µV/K)
         """
-        if self.temp_to_seebeck_data is None:
+        if self._temp_to_seebeck_data is None:
             raise NotImplementedError(f"Seebeck coefficient calculation not available for type {self.name}")
 
-        return self._find_range_and_evaluate(temp_c, self.temp_to_seebeck_data, self.seebeck_expo_function)
-
-    def temp_to_seebeck(self, temp_c: float) -> float:
-        """
-        Alias for temperature_to_seebeck for backward compatibility.
-
-        Args:
-            temp_c: Temperature in degrees Celsius
-
-        Returns:
-            Seebeck coefficient in microvolts per Kelvin (µV/K)
-        """
-        return self.temperature_to_seebeck(temp_c)
+        return self._find_range_and_evaluate(temp_c, self._temp_to_seebeck_data, self._seebeck_expo_function)
 
     def temp_to_dsdt(self, temp_c: float) -> float:
-        """
-        Alias for temperature_to_dsdt for backward compatibility.
-
-        Args:
-            temp_c: Temperature in degrees Celsius
-
-        Returns:
-            Temperature derivative of Seebeck coefficient in nanovolts per Kelvin squared (nV/K²)
-        """
-        return self.temperature_to_dsdt(temp_c)
-
-    def temperature_to_dsdt(self, temp_c: float) -> float:
         """
         Calculate dSeebeck/dT (nV/K²) at given temperature.
 
@@ -243,12 +206,12 @@ class Thermocouple(ABC):
         Returns:
             Temperature derivative of Seebeck coefficient in nanovolts per Kelvin squared (nV/K²)
         """
-        if self.temp_to_dsdt_data is None:
+        if self._temp_to_dsdt_data is None:
             raise NotImplementedError(f"dSeebeck/dT calculation not available for type {self.name}")
 
-        return self._find_range_and_evaluate(temp_c, self.temp_to_dsdt_data, self.dsdt_expo_function)
+        return self._find_range_and_evaluate(temp_c, self._temp_to_dsdt_data, self._dsdt_expo_function)
 
-    def temperature_to_volt_pos_leg(self, temp_c: float) -> float:
+    def temp_to_volt_pos_leg(self, temp_c: float) -> float:
         """
         Calculate the thermoelectric voltage of the positive leg at a given temperature.
 
@@ -258,13 +221,13 @@ class Thermocouple(ABC):
         Returns:
             Thermoelectric voltage of positive leg in volts (V)
         """
-        if self.temp_to_microvolt_pos_leg_data is None:
+        if self._temp_to_microvolt_pos_leg_data is None:
             raise NotImplementedError(f"Positive leg voltage calculation not available for type {self.name}")
 
-        microvolt = self._find_range_and_evaluate(temp_c, self.temp_to_microvolt_pos_leg_data)
+        microvolt = self._find_range_and_evaluate(temp_c, self._temp_to_microvolt_pos_leg_data)
         return microvolt / 1e6  # Convert microvolts to volts
 
-    def temperature_to_volt_neg_leg(self, temp_c: float) -> float:
+    def temp_to_volt_neg_leg(self, temp_c: float) -> float:
         """
         Calculate the thermoelectric voltage of the negative leg at a given temperature.
 
@@ -274,13 +237,13 @@ class Thermocouple(ABC):
         Returns:
             Thermoelectric voltage of negative leg in volts (V)
         """
-        if self.temp_to_microvolt_neg_leg_data is None:
+        if self._temp_to_microvolt_neg_leg_data is None:
             raise NotImplementedError(f"Negative leg voltage calculation not available for type {self.name}")
 
-        microvolt = self._find_range_and_evaluate(temp_c, self.temp_to_microvolt_neg_leg_data, self.microvolt_neg_leg_expo_function)
+        microvolt = self._find_range_and_evaluate(temp_c, self._temp_to_microvolt_neg_leg_data, self._microvolt_neg_leg_expo_function)
         return microvolt / 1e6  # Convert microvolts to volts
 
-    def temperature_to_seebeck_pos_leg(self, temp_c: float) -> float:
+    def temp_to_seebeck_pos_leg(self, temp_c: float) -> float:
         """
         Calculate the Seebeck coefficient of the positive leg at a given temperature.
 
@@ -290,12 +253,12 @@ class Thermocouple(ABC):
         Returns:
             Seebeck coefficient of positive leg in microvolts per Kelvin (µV/K)
         """
-        if self.temp_to_seebeck_pos_leg_data is None:
+        if self._temp_to_seebeck_pos_leg_data is None:
             raise NotImplementedError(f"Positive leg Seebeck coefficient calculation not available for type {self.name}")
 
-        return self._find_range_and_evaluate(temp_c, self.temp_to_seebeck_pos_leg_data)
+        return self._find_range_and_evaluate(temp_c, self._temp_to_seebeck_pos_leg_data)
 
-    def temperature_to_seebeck_neg_leg(self, temp_c: float) -> float:
+    def temp_to_seebeck_neg_leg(self, temp_c: float) -> float:
         """
         Calculate the Seebeck coefficient of the negative leg at a given temperature.
 
@@ -305,7 +268,7 @@ class Thermocouple(ABC):
         Returns:
             Seebeck coefficient of negative leg in microvolts per Kelvin (µV/K)
         """
-        if self.temp_to_seebeck_neg_leg_data is None:
+        if self._temp_to_seebeck_neg_leg_data is None:
             raise NotImplementedError(f"Negative leg Seebeck coefficient calculation not available for type {self.name}")
 
-        return self._find_range_and_evaluate(temp_c, self.temp_to_seebeck_neg_leg_data)
+        return self._find_range_and_evaluate(temp_c, self._temp_to_seebeck_neg_leg_data)

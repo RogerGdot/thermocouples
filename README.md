@@ -1,10 +1,10 @@
-# Python Thermocouples v2.0
+# Thermocouples
 
 [![PyPI version](https://badge.fury.io/py/thermocouples.svg)](https://badge.fury.io/py/thermocouples)
 [![Python](https://img.shields.io/pypi/pyversions/thermocouples.svg)](https://pypi.org/project/thermocouples/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A comprehensive, high-accuracy thermocouple calculation library for Python, implementing all standard thermocouple types with NIST-compliant polynomial calculations using modern object-oriented architecture.
+A comprehensive, high-accuracy thermocouple calculation library for Python with clean object-oriented architecture and professional API design that hides implementation details.
 
 ## Features
 
@@ -23,14 +23,14 @@ A comprehensive, high-accuracy thermocouple calculation library for Python, impl
 - **🧪 Well Tested**: Comprehensive test suite ensuring accuracy
 - **📚 Type Safe**: Full type hints for better IDE support
 
-## What's New in Version 2.0
+## What's New in Version 2.1
 
-**🚀 Complete Architectural Redesign:**
-- **Object-Oriented Design**: Each thermocouple type is now a class inheriting from an abstract base class
-- **Factory Pattern**: Simple `get_thermocouple("K")` function for easy instantiation
-- **Type Safety**: Full Python type hints throughout the codebase
-- **Better Maintainability**: Cleaner code structure makes adding new types trivial
-- **100% Backward Compatibility**: All existing APIs continue to work identically
+**🧹 Professional API Cleanup:**
+- **Clean Interface**: All internal implementation details hidden with underscore prefixes
+- **IDE-Friendly**: Only user-relevant methods visible in autocomplete
+- **Simplified Functions**: Shortened method names (`temp_to_volt` vs `temperature_to_voltage`)
+- **Pure OOP Design**: Complete removal of legacy function-based API
+- **Professional Standards**: Following Python best practices for library design
 
 ## Supported Thermocouple Types
 
@@ -61,27 +61,16 @@ import thermocouples as tc
 tc_k = tc.get_thermocouple("K")
 
 # Temperature to voltage conversion
-voltage = tc_k.temperature_to_voltage(100.0)  # 4.096 mV at 100°C
+voltage = tc_k.temp_to_volt(100.0)  # 4.096 mV at 100°C
 print(f"K-type at 100°C: {voltage:.3f} mV")
 
 # Voltage to temperature conversion  
-temperature = tc_k.voltage_to_temperature(0.004096)  # Back to ~100°C
+temperature = tc_k.volt_to_temp(0.004096)  # Back to ~100°C
 print(f"K-type at 4.096 mV: {temperature:.1f}°C")
 
 # Seebeck coefficient calculation
 seebeck = tc_k.temp_to_seebeck(100.0)  # µV/K
 print(f"Seebeck coefficient at 100°C: {seebeck:.1f} µV/K")
-```
-
-### Legacy API (Backward Compatible)
-
-```python
-import thermocouples as tc
-
-# All original functions still work exactly the same
-voltage = tc.temp_to_voltage(100.0, "K")
-temperature = tc.voltage_to_temp(0.004096, "K")
-seebeck = tc.temp_to_seebeck(100.0, "K")
 ```
 
 ### Advanced Usage
@@ -93,7 +82,7 @@ import thermocouples as tc
 tc_k = tc.get_thermocouple("K")
 
 # High-precision calculations
-voltage = tc_k.temperature_to_voltage(200.5)
+voltage = tc_k.temp_to_volt(200.5)
 seebeck = tc_k.temp_to_seebeck(200.5)  # Seebeck coefficient
 dsdt = tc_k.temp_to_dsdt(200.5)        # Temperature derivative
 
@@ -102,8 +91,8 @@ hot_junction_temp = 500.0  # °C
 cold_junction_temp = 25.0   # °C (room temperature)
 
 # Calculate voltage with cold junction at 25°C instead of 0°C
-voltage_hot = tc_k.temperature_to_voltage(hot_junction_temp)
-voltage_cold = tc_k.temperature_to_voltage(cold_junction_temp)
+voltage_hot = tc_k.temp_to_volt(hot_junction_temp)
+voltage_cold = tc_k.temp_to_volt(cold_junction_temp)
 actual_voltage = voltage_hot - voltage_cold
 print(f"Actual measured voltage: {actual_voltage:.6f} V")
 
@@ -111,12 +100,12 @@ print(f"Actual measured voltage: {actual_voltage:.6f} V")
 tc_e = tc.get_thermocouple("E")
 
 # Positive leg (Ni-Cr) calculations
-pos_voltage = tc_e.pos_temp_to_voltage(300.0)
-pos_seebeck = tc_e.pos_temp_to_seebeck(300.0)
+pos_voltage = tc_e.temp_to_volt_pos_leg(300.0)
+pos_seebeck = tc_e.temp_to_seebeck_pos_leg(300.0)
 
 # Negative leg (Cu-Ni) calculations  
-neg_voltage = tc_e.neg_temp_to_voltage(300.0)
-neg_seebeck = tc_e.neg_temp_to_seebeck(300.0)
+neg_voltage = tc_e.temp_to_volt_neg_leg(300.0)
+neg_seebeck = tc_e.temp_to_seebeck_neg_leg(300.0)
 
 print(f"E-type at 300°C:")
 print(f"  Positive leg: {pos_voltage:.6f} V, {pos_seebeck:.3f} µV/K")
@@ -139,7 +128,7 @@ for tc_type in types:
         continue  # B-type has limited range at low temperatures
     
     thermocouple = tc.get_thermocouple(tc_type)
-    voltage = thermocouple.temperature_to_voltage(temperature)
+    voltage = thermocouple.temp_to_volt(temperature)
     seebeck = thermocouple.temp_to_seebeck(temperature)
     print(f"  Type {tc_type}: {voltage:.6f} V (Seebeck: {seebeck:.1f} µV/K)")
 ```
@@ -175,36 +164,25 @@ Each thermocouple type inherits from the abstract `Thermocouple` base class, ens
 ### Factory Functions
 
 - `get_thermocouple(tc_type: str) -> Thermocouple`: Get a thermocouple instance
-- `get_available_types() -> List[str]`: List all supported thermocouple types
-
-### Legacy Functions (maintained for backward compatibility)
-
-- `temp_to_voltage(temperature: float, tc_type: str, cold_junction: float = 0.0) -> float`
-- `voltage_to_temp(voltage: float, tc_type: str, cold_junction: float = 0.0) -> float`  
-- `temp_to_seebeck(temperature: float, tc_type: str) -> float`
-- `temp_to_dsdt(temperature: float, tc_type: str) -> float`
 
 ### Thermocouple Class Methods
 
 Each thermocouple instance provides:
 
 #### Core Conversion Methods
-- `temperature_to_voltage(temperature: float) -> float`
-- `voltage_to_temperature(voltage: float) -> float`
+- `temp_to_volt(temperature: float) -> float`
+- `volt_to_temp(voltage: float) -> float`
 - `temp_to_seebeck(temperature: float) -> float` 
 - `temp_to_dsdt(temperature: float) -> float`
 
 #### Individual Leg Methods
-- `pos_temp_to_voltage(temperature: float) -> float`
-- `neg_temp_to_voltage(temperature: float) -> float`
-- `pos_temp_to_seebeck(temperature: float) -> float`
-- `neg_temp_to_seebeck(temperature: float) -> float`
+- `temp_to_volt_pos_leg(temperature: float) -> float`
+- `temp_to_volt_neg_leg(temperature: float) -> float`
+- `temp_to_seebeck_pos_leg(temperature: float) -> float`
+- `temp_to_seebeck_neg_leg(temperature: float) -> float`
 
 #### Properties
-- `tc_type: str` - Thermocouple type identifier
-- `temperature_range: Tuple[float, float]` - Valid temperature range
-- `pos_material: str` - Positive leg material composition
-- `neg_material: str` - Negative leg material composition
+- `name: str` - Thermocouple type identifier (e.g., "Type K")
 
 ## Requirements
 
@@ -253,39 +231,35 @@ python -c "
 import thermocouples as tc
 for t in ['K', 'J', 'T']:
     tc_obj = tc.get_thermocouple(t)
-    v = tc_obj.temperature_to_voltage(100.0)
+    v = tc_obj.temp_to_volt(100.0)
     print(f'Type {t}: {v:.6f} V at 100°C')
 "
 ```
 
-## Migration from Version 1.x
+## Migration Guide
 
-**Version 2.0 is 100% backward compatible**. Existing code will continue to work without changes:
+**Version 2.1 uses a clean OOP-only API**. Here's how to use the new simplified interface:
 
 ```python
-# Old API (still works)
-import thermocouples as tc
-voltage = tc.temp_to_voltage(100.0, "K")
-temperature = tc.voltage_to_temp(0.004096, "K")
-
-# New API (recommended)
+# Modern API (clean, professional)
 import thermocouples as tc
 tc_k = tc.get_thermocouple("K")
-voltage = tc_k.temperature_to_voltage(100.0)
-temperature = tc_k.voltage_to_temperature(0.004096)
+voltage = tc_k.temp_to_volt(100.0)
+temperature = tc_k.volt_to_temp(0.004096)
 ```
 
-The new OOP approach offers:
+The clean OOP approach offers:
 - **Better Performance**: Instantiate once, use many times
 - **Type Safety**: Full Python type hints
-- **IDE Support**: Better autocomplete and error detection
-- **Code Clarity**: More intuitive object-oriented interface
+- **IDE Support**: Only relevant methods visible in autocomplete
+- **Code Clarity**: Professional object-oriented interface
+- **Clean Design**: Implementation details hidden from user view
 
 ## Contributors
 
 - **Dipl.-Ing. Gregor Oppitz** - *Original Author*  
   *Deutsches Zentrum für Luft- und Raumfahrt (DLR)*
-- **Version 2.0 Architecture** - *Complete OOP refactoring*
+- **Version 2.1 Architecture** - *Clean API with hidden implementation details*
 
 ## License
 

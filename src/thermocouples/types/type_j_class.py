@@ -24,7 +24,12 @@ class TypeJ(Thermocouple):
     """Type J Thermocouple (Fe / Cu-Ni) implementation."""
 
     @property
-    def temp_to_microvolt_data(self) -> list[tuple[tuple[float, float], list[float]]]:
+    def name(self) -> str:
+        """Get the thermocouple type name."""
+        return "Type J"
+
+    @property
+    def _temp_to_microvolt_data(self) -> list[tuple[tuple[float, float], list[float]]]:
         """Get temperature to microvolt polynomial coefficients."""
         return [
             # Range: -210°C to 760°C
@@ -61,7 +66,7 @@ class TypeJ(Thermocouple):
         ]
 
     @property
-    def microvolt_to_temp_data(self) -> list[tuple[tuple[float, float], list[float]]]:
+    def _microvolt_to_temp_data(self) -> list[tuple[tuple[float, float], list[float]]]:
         """Get microvolt to temperature polynomial coefficients."""
         return [
             # Range: -8095µV to 0µV (-210°C to 0°C)
@@ -113,7 +118,7 @@ class TypeJ(Thermocouple):
         ]
 
     @property
-    def temp_to_seebeck_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
+    def _temp_to_seebeck_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
         """Get temperature to Seebeck coefficient polynomial coefficients."""
         return [
             # Range: -210°C to 760°C
@@ -146,7 +151,7 @@ class TypeJ(Thermocouple):
         ]
 
     @property
-    def temp_to_dsdt_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
+    def _temp_to_dsdt_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
         """Get temperature to dSeebeck/dT polynomial coefficients."""
         return [
             # Range: -210°C to 760°C
@@ -177,7 +182,7 @@ class TypeJ(Thermocouple):
         ]
 
     @property
-    def temp_to_microvolt_pos_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
+    def _temp_to_microvolt_pos_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
         """Get temperature to microvolt polynomial coefficients for positive leg."""
         return [
             # Range: -210°C to 760°C
@@ -200,7 +205,7 @@ class TypeJ(Thermocouple):
         ]
 
     @property
-    def temp_to_microvolt_neg_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
+    def _temp_to_microvolt_neg_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
         """Get temperature to microvolt polynomial coefficients for negative leg."""
         return [
             # Range: -210°C to 760°C
@@ -223,7 +228,7 @@ class TypeJ(Thermocouple):
         ]
 
     @property
-    def temp_to_seebeck_pos_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
+    def _temp_to_seebeck_pos_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
         """Get temperature to Seebeck coefficient polynomial coefficients for positive leg."""
         return [
             # Range: -210°C to 760°C
@@ -244,7 +249,7 @@ class TypeJ(Thermocouple):
         ]
 
     @property
-    def temp_to_seebeck_neg_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
+    def _temp_to_seebeck_neg_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
         """Get temperature to Seebeck coefficient polynomial coefficients for negative leg."""
         return [
             # Range: -210°C to 760°C

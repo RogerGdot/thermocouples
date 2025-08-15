@@ -22,7 +22,12 @@ class TypeE(Thermocouple):
     """Type E Thermocouple (Ni-Cr / Cu-Ni) implementation."""
 
     @property
-    def temp_to_microvolt_data(self) -> list[tuple[tuple[float, float], list[float]]]:
+    def name(self) -> str:
+        """Get the thermocouple type name."""
+        return "Type E"
+
+    @property
+    def _temp_to_microvolt_data(self) -> list[tuple[tuple[float, float], list[float]]]:
         """Get temperature to microvolt polynomial coefficients."""
         return [
             # Range: -270°C to 0°C
@@ -69,7 +74,7 @@ class TypeE(Thermocouple):
         ]
 
     @property
-    def microvolt_to_temp_data(self) -> list[tuple[tuple[float, float], list[float]]]:
+    def _microvolt_to_temp_data(self) -> list[tuple[tuple[float, float], list[float]]]:
         """Get microvolt to temperature polynomial coefficients."""
         return [
             # Range: -8825µV to 0µV (-200°C to 0°C)
@@ -110,7 +115,7 @@ class TypeE(Thermocouple):
         ]
 
     @property
-    def temp_to_seebeck_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
+    def _temp_to_seebeck_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
         """Get temperature to Seebeck coefficient polynomial coefficients."""
         return [
             # Range: -270°C to 0°C
@@ -153,7 +158,7 @@ class TypeE(Thermocouple):
         ]
 
     @property
-    def temp_to_dsdt_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
+    def _temp_to_dsdt_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
         """Get temperature to dSeebeck/dT polynomial coefficients."""
         return [
             # Range: -270°C to 0°C

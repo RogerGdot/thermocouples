@@ -33,11 +33,11 @@ class TypeB(Thermocouple):
 
     @property
     def name(self) -> str:
-        """Thermocouple type designation."""
-        return "B"
+        """Get the thermocouple type name."""
+        return "Type B"
 
     @property
-    def temp_to_microvolt_data(self) -> list[tuple[tuple[float, float], list[float]]]:
+    def _temp_to_microvolt_data(self) -> list[tuple[tuple[float, float], list[float]]]:
         """Temperature to voltage polynomial coefficients (°C to µV)."""
         return [
             # Range: 0°C to 630.615°C
@@ -75,7 +75,7 @@ class TypeB(Thermocouple):
         ]
 
     @property
-    def microvolt_to_temp_data(self) -> list[tuple[tuple[float, float], list[float]]]:
+    def _microvolt_to_temp_data(self) -> list[tuple[tuple[float, float], list[float]]]:
         """Voltage to temperature polynomial coefficients (µV to °C)."""
         return [
             # Range: 0µV to 2431µV (250°C to 700°C)
@@ -115,7 +115,7 @@ class TypeB(Thermocouple):
         ]
 
     @property
-    def temp_to_seebeck_data(self) -> list[tuple[tuple[float, float], list[float]]]:
+    def _temp_to_seebeck_data(self) -> list[tuple[tuple[float, float], list[float]]]:
         """Temperature to Seebeck coefficient polynomial coefficients (°C to µV/K)."""
         return [
             # Range: 0°C to 630.615°C
@@ -149,7 +149,7 @@ class TypeB(Thermocouple):
         ]
 
     @property
-    def temp_to_dsdt_data(self) -> list[tuple[tuple[float, float], list[float]]]:
+    def _temp_to_dsdt_data(self) -> list[tuple[tuple[float, float], list[float]]]:
         """Temperature to dSeebeck/dT polynomial coefficients (°C to nV/K²)."""
         return [
             # Range: 0°C to 630.615°C
@@ -181,36 +181,36 @@ class TypeB(Thermocouple):
         ]
 
     @property
-    def temp_to_microvolt_pos_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
+    def _temp_to_microvolt_pos_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
         """Temperature to voltage polynomial coefficients for positive leg (°C to µV)."""
         return None  # Individual leg data not available for Type B
 
     @property
-    def temp_to_microvolt_neg_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
+    def _temp_to_microvolt_neg_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
         """Temperature to voltage polynomial coefficients for negative leg (°C to µV)."""
         return None  # Individual leg data not available for Type B
 
     @property
-    def temp_to_seebeck_pos_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
+    def _temp_to_seebeck_pos_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
         """Temperature to Seebeck coefficient polynomial coefficients for positive leg (°C to µV/K)."""
         return None  # Individual leg data not available for Type B
 
     @property
-    def temp_to_seebeck_neg_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
+    def _temp_to_seebeck_neg_leg_data(self) -> Optional[list[tuple[tuple[float, float], list[float]]]]:
         """Temperature to Seebeck coefficient polynomial coefficients for negative leg (°C to µV/K)."""
         return None  # Individual leg data not available for Type B
 
     @property
-    def microvolt_expo_function(self) -> Optional[Callable[[float], float]]:
+    def _microvolt_expo_function(self) -> Optional[Callable[[float], float]]:
         """Get exponential correction function for voltage calculation."""
         return None  # Type B has no exponential correction
 
     @property
-    def seebeck_expo_function(self) -> Optional[Callable[[float], float]]:
+    def _seebeck_expo_function(self) -> Optional[Callable[[float], float]]:
         """Get exponential correction function for Seebeck calculation."""
         return None  # Type B has no exponential correction
 
     @property
-    def dsdt_expo_function(self) -> Optional[Callable[[float], float]]:
+    def _dsdt_expo_function(self) -> Optional[Callable[[float], float]]:
         """Get exponential correction function for dS/dT calculation."""
         return None  # Type B has no exponential correction
