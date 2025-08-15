@@ -41,7 +41,7 @@ from .base import Thermocouple
 from .registry import THERMOCOUPLE_TYPES, get_thermocouple
 
 # Module metadata
-__version__ = "2.1.0"
+__version__ = "2.1.1"
 __author__ = "RogerGdot"
 
 # Export main functionality

@@ -257,8 +257,6 @@ The clean OOP approach offers:
 
 ## Contributors
 
-- **Dipl.-Ing. Gregor Oppitz** - *Original Author*  
-  *Deutsches Zentrum für Luft- und Raumfahrt (DLR)*
 - **Version 2.1 Architecture** - *Clean API with hidden implementation details*
 
 ## License

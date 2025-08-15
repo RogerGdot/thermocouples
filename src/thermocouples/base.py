@@ -209,7 +209,9 @@ class Thermocouple(ABC):
         if self._temp_to_dsdt_data is None:
             raise NotImplementedError(f"dSeebeck/dT calculation not available for type {self.name}")
 
-        return self._find_range_and_evaluate(temp_c, self._temp_to_dsdt_data, self._dsdt_expo_function)
+        result_microvolt_per_k2 = self._find_range_and_evaluate(temp_c, self._temp_to_dsdt_data, self._dsdt_expo_function)
+        # Convert µV/K² to nV/K²
+        return result_microvolt_per_k2 * 1000.0
 
     def temp_to_volt_pos_leg(self, temp_c: float) -> float:
         """
