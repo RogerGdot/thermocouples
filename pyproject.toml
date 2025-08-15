@@ -4,9 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "thermocouples"
-version = "2.0.0"
+version = "2.0.1"
 authors = [
-    {name = "RogerGdot", email = "roger@example.com"},
+    {name = "RogerGdot", email = "rogergdot@gmail.com"},
 ]
 description = "Modern object-oriented thermocouple library with NIST-compliant calculations for all standard types"
 readme = "README.md"
