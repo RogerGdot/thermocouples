@@ -33,7 +33,7 @@ twine check dist/*
 twine upload --repository testpypi dist/*
 
 # Teste Installation von TestPyPI
-pip install --index-url https://test.pypi.org/simple/ python-thermocouples
+pip install --index-url https://test.pypi.org/simple/ thermocouples
 ```
 
 ### 6. Finaler Upload auf PyPI
@@ -44,7 +44,7 @@ twine upload dist/*
 
 ### 7. Installation testen
 ```bash
-pip install python-thermocouples
+pip install thermocouples
 ```
 
 ## Wichtige Dateien für PyPI
@@ -144,7 +144,7 @@ temp = tc_k.voltage_to_temperature(voltage)
 ### 📦 Installation
 
 ```bash
-pip install python-thermocouples
+pip install thermocouples
 ```
 
 ### 🔗 Quick Example
@@ -186,5 +186,5 @@ print(f"Seebeck: {seebeck:.1f} µV/K")
 1. **GitHub Repository erstellen/aktualisieren**
 2. **Git Commit & Push** aller Änderungen
 3. **GitHub Release erstellen** (triggert automatisch PyPI Upload)
-4. **Installation testen** `pip install python-thermocouples`
+4. **Installation testen** `pip install thermocouples`
 5. **Dokumentation aktualisieren** falls nötig

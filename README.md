@@ -1,7 +1,7 @@
 # Python Thermocouples v2.0
 
-[![PyPI version](https://badge.fury.io/py/python-thermocouples.svg)](https://badge.fury.io/py/python-thermocouples)
-[![Python](https://img.shields.io/pypi/pyversions/python-thermocouples.svg)](https://pypi.org/project/python-thermocouples/)
+[![PyPI version](https://badge.fury.io/py/thermocouples.svg)](https://badge.fury.io/py/thermocouples)
+[![Python](https://img.shields.io/pypi/pyversions/thermocouples.svg)](https://pypi.org/project/thermocouples/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Tests](https://github.com/RogerGdot/thermocouples/actions/workflows/tests.yml/badge.svg)](https://github.com/RogerGdot/thermocouples/actions/workflows/tests.yml)
 
@@ -50,7 +50,7 @@ A comprehensive, high-accuracy thermocouple calculation library for Python, impl
 ### Installation
 
 ```bash
-pip install python-thermocouples
+pip install thermocouples
 ```
 
 ### Basic Usage (New OOP API - Recommended)
